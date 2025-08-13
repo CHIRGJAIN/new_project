@@ -3,13 +3,14 @@ export interface User {
   email: string;
   name: string;
   role: 'owner' | 'agent';
+  ownerId?: string; // For agents, references the owner who created them
   createdAt: string;
 }
 
 export interface Property {
   id: string;
   name: string;
-  type: 'farmhouse' | 'club' | 'banquet' | 'houseparty';
+  type: 'farmhouse' | 'club' | 'banquet' | 'house_party';
   description: string;
   location: string;
   capacity: number;
@@ -31,21 +32,22 @@ export interface Event {
   endDate: string;
   guestCount: number;
   totalAmount: number;
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   clientName: string;
-  clientContact: string;
-  createdBy: string;
+  clientEmail: string;
+  clientPhone: string;
+  createdBy: string; // User ID
   createdAt: string;
 }
 
-export interface Agent {
+export interface FinancialRecord {
   id: string;
-  name: string;
-  email: string;
-  phone: string;
-  assignedProperties: string[];
-  createdBy: string;
-  isActive: boolean;
+  eventId: string;
+  propertyId: string;
+  amount: number;
+  type: 'booking' | 'commission' | 'expense';
+  description: string;
+  date: string;
   createdAt: string;
 }
 
@@ -54,4 +56,9 @@ export interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
 }

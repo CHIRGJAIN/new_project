@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthContextType } from '../types';
-import { authUtils } from '../utils/auth';
-import { mockUsers } from '../utils/mockData';
+import { tokenManager, authenticateUser } from '../utils/auth';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -22,36 +21,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const token = authUtils.getToken();
-    const userData = authUtils.getUser();
+    // Check if user is already logged in
+    const savedUser = tokenManager.getUser();
+    const token = tokenManager.getToken();
     
-    if (token && userData) {
-      setUser(userData);
+    if (savedUser && token) {
+      setUser(savedUser);
     }
+    
     setIsLoading(false);
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     
-    // Mock authentication - in real app, this would be an API call
-    const foundUser = mockUsers.find(u => u.email === email);
-    
-    if (foundUser && password === 'password123') {
-      const token = authUtils.generateToken();
-      authUtils.setToken(token);
-      authUtils.setUser(foundUser);
-      setUser(foundUser);
+    try {
+      const result = await authenticateUser(email, password);
+      
+      if (result) {
+        const { user, token } = result;
+        tokenManager.setToken(token);
+        tokenManager.setUser(user);
+        setUser(user);
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
+    } finally {
       setIsLoading(false);
-      return true;
     }
-    
-    setIsLoading(false);
-    return false;
   };
 
   const logout = () => {
-    authUtils.removeToken();
+    tokenManager.clearAll();
     setUser(null);
   };
 

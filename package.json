@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.539.0",
+    "tailwind-merge": "^3.3.1"
+  }
+}

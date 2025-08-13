@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { Building2, Mail, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { Building2, Mail, Lock, AlertCircle } from 'lucide-react';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -12,6 +12,11 @@ const LoginForm: React.FC = () => {
     e.preventDefault();
     setError('');
 
+    if (!email || !password) {
+      setError('Please fill in all fields');
+      return;
+    }
+
     const success = await login(email, password);
     if (!success) {
       setError('Invalid email or password');
@@ -19,18 +24,22 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 px-4">
+      <div className="max-w-md w-full space-y-8">
+        <div className="text-center">
+          <div className="flex justify-center">
             <Building2 className="w-12 h-12 text-primary-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">PropertyHub</h1>
-          <p className="text-gray-600 mt-2">Property & Event Management Platform</p>
+          <h2 className="mt-6 text-3xl font-bold text-gray-900">
+            Property Manager
+          </h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Sign in to manage your properties and events
+          </p>
         </div>
 
         <div className="card">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email Address
@@ -39,12 +48,14 @@ const LoginForm: React.FC = () => {
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   id="email"
+                  name="email"
                   type="email"
+                  autoComplete="email"
+                  required
+                  className="input pl-10"
+                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="input-field pl-10"
-                  placeholder="Enter your email"
-                  required
                 />
               </div>
             </div>
@@ -57,37 +68,47 @@ const LoginForm: React.FC = () => {
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   id="password"
+                  name="password"
                   type="password"
+                  autoComplete="current-password"
+                  required
+                  className="input pl-10"
+                  placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="input-field pl-10"
-                  placeholder="Enter your password"
-                  required
                 />
               </div>
             </div>
 
             {error && (
-              <div className="flex items-center space-x-2 text-red-600 text-sm">
-                <AlertCircle className="w-4 h-4" />
-                <span>{error}</span>
+              <div className="bg-error-50 border border-error-200 text-error-700 px-4 py-3 rounded-lg text-sm">
+                {error}
               </div>
             )}
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary w-full"
             >
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                'Sign in'
+              )}
             </button>
           </form>
 
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Demo Credentials:</h3>
-            <div className="text-xs text-gray-600 space-y-1">
-              <p><strong>Owner:</strong> owner@example.com / password123</p>
-              <p><strong>Agent:</strong> agent@example.com / password123</p>
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="text-sm text-gray-600">
+              <p className="font-medium mb-2">Demo Credentials:</p>
+              <div className="space-y-1">
+                <p><strong>Owner:</strong> owner@example.com / owner123</p>
+                <p><strong>Agent:</strong> agent@example.com / agent123</p>
+              </div>
             </div>
           </div>
         </div>

@@ -3,8 +3,8 @@ import { useAuth } from '../contexts/AuthContext';
 import Layout from './Layout';
 import PropertiesTab from './tabs/PropertiesTab';
 import EventsTab from './tabs/EventsTab';
-import AgentsTab from './tabs/AgentsTab';
 import FinancesTab from './tabs/FinancesTab';
+import AgentsTab from './tabs/AgentsTab';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -16,10 +16,10 @@ const Dashboard: React.FC = () => {
         return <PropertiesTab />;
       case 'events':
         return <EventsTab />;
-      case 'agents':
-        return user?.role === 'owner' ? <AgentsTab /> : <div>Access Denied</div>;
       case 'finances':
-        return user?.role === 'owner' ? <FinancesTab /> : <div>Access Denied</div>;
+        return user?.role === 'owner' ? <FinancesTab /> : null;
+      case 'agents':
+        return user?.role === 'owner' ? <AgentsTab /> : null;
       default:
         return <PropertiesTab />;
     }
